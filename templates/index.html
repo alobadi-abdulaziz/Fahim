@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}الرئيسية{% endblock %}
+
+{% block content %}
+<div class="page">
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <!-- Geometric decoration -->
+    <div class="hero-geo" aria-hidden="true">
+      <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="250,10 490,200 400,470 100,470 10,200" stroke="#c2a378" stroke-width="1" fill="none"/>
+        <polygon points="250,50 460,210 380,440 120,440 40,210" stroke="#c2a378" stroke-width="0.5" fill="none"/>
+        <polygon points="250,90 430,220 360,410 140,410 70,220" stroke="#c2a378" stroke-width="0.5" fill="none"/>
+        <circle cx="250" cy="250" r="180" stroke="#c2a378" stroke-width="0.5" fill="none"/>
+        <circle cx="250" cy="250" r="120" stroke="#c2a378" stroke-width="0.4" fill="none"/>
+        <line x1="250" y1="70" x2="250" y2="430" stroke="#c2a378" stroke-width="0.3"/>
+        <line x1="70"  y1="250" x2="430" y2="250" stroke="#c2a378" stroke-width="0.3"/>
+        <line x1="120" y1="120" x2="380" y2="380" stroke="#c2a378" stroke-width="0.3"/>
+        <line x1="380" y1="120" x2="120" y2="380" stroke="#c2a378" stroke-width="0.3"/>
+      </svg>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <div class="badge-dot"></div>
+        مدعوم بالذكاء الاصطناعي
+      </div>
+      <span class="hero-icon">🤟</span>
+      <h1 class="hero-title">
+        ترجمة <span class="gold">لغة الإشارة</span><br>بالذكاء الاصطناعي
+      </h1>
+      <p class="hero-sub">
+        حوّل النصوص العربية والصوت إلى فيديوهات لغة الإشارة فوراً، باستخدام نماذج الذكاء الاصطناعي المتقدمة.
+      </p>
+      <div class="hero-actions">
+        <a href="/translator" class="btn-primary lg">ابدأ الترجمة الآن</a>
+        <a href="#features" class="btn-ghost lg">اكتشف المزيد</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Features ── -->
+  <section class="features" id="features">
+    <div class="section-header">
+      <div class="section-label">منصة متكاملة</div>
+      <h2 class="section-title">كل ما تحتاجه في مكان واحد</h2>
+    </div>
+
+    <div class="features-grid">
+
+      <article class="card feature-card">
+        <div class="feature-icon">🔤</div>
+        <h3>المترجم الفوري</h3>
+        <p>اكتب أي جملة عربية أو تحدث بالميكروفون، وستُحوَّل في ثوانٍ إلى فيديو لغة إشارة واضح.</p>
+      </article>
+
+      <article class="card feature-card">
+        <div class="feature-icon">📚</div>
+        <h3>منصة التعلّم</h3>
+        <p>تعلّم لغة الإشارة بمسارات تدريجية من مستوى المبتدئ حتى الاحتراف، مع تمارين تفاعلية.</p>
+      </article>
+
+      <article class="card feature-card">
+        <div class="feature-icon">📡</div>
+        <h3>البث المباشر</h3>
+        <p>ترجمة فورية ومستمرة للكلام المنطوق إلى لغة إشارة، مثالية للمؤتمرات والفعاليات.</p>
+      </article>
+
+      <article class="card feature-card">
+        <div class="feature-icon">📖</div>
+        <h3>القاموس الإشاري</h3>
+        <p>أكثر من 7800 كلمة وعبارة في قاموس شامل مع وصف دقيق وفيديو لكل إشارة.</p>
+      </article>
+
+    </div>
+  </section>
+
+</div>
+{% endblock %}

@@ -11,6 +11,7 @@ import json
 import os
 import re
 import requests
+import threading
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
@@ -21,7 +22,7 @@ API_KEY      = "sk-440e263c2de24986b7a81a6593e629dc"
 DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions"
 VIDEOS_DIR   = r"C:\Users\oscar\Desktop\Sing_Lun\data\videos"
 INDEX_FILE   = "embeddings_index.npz"
-MODEL_NAME   = "paraphrase-multilingual-MiniLM-L12-v2"
+MODEL_NAME   = "intfloat/multilingual-e5-base"
 
 os.environ["PATH"] += r";C:\Users\oscar\Desktop\ffmpeg-8.1-essentials_build\bin"
 
@@ -90,7 +91,8 @@ if os.path.exists(INDEX_FILE):
     embeddings = saved["embeddings"]
 else:
     print(f"Building embeddings index for {len(all_words)} words (first time only)...")
-    embeddings = emb_model.encode(all_words, show_progress_bar=True, batch_size=64)
+    passage_words = [f"passage: {w}" for w in all_words]
+    embeddings = emb_model.encode(passage_words, show_progress_bar=True, batch_size=64)
     np.savez(INDEX_FILE, embeddings=embeddings)
     print("Index saved.")
 
@@ -136,7 +138,7 @@ def embedding_search(queries: list, top_k: int = 5):
     for q in queries:
         if not q or len(q.strip()) < 2:
             continue
-        qvec   = emb_model.encode([q])[0]
+        qvec   = emb_model.encode([f"query: {q}"])[0]
         norms  = np.linalg.norm(embeddings, axis=1) * np.linalg.norm(qvec)
         scores = np.dot(embeddings, qvec) / (norms + 1e-9)
         top_i  = np.argsort(scores)[::-1][:top_k]
@@ -269,22 +271,17 @@ def search_word(original_word: str, fusha_candidates: list, sentence: str):
     Step C: DeepSeek judges all collected candidates with full sentence context
     """
     collected = {}  # id → {"id", "word", "source"}
+    lock = threading.Lock()
 
     def add(cid, cword, source):
-        if cid and cid not in collected:
-            collected[cid] = {"id": cid, "word": cword, "source": source}
-
-    # ── Step A: Exact match ──────────────────────────────────────
-    for f in fusha_candidates:
-        cid, cword = exact_search(f)
         if cid:
-            add(cid, cword, "exact")
+            with lock:
+                if cid not in collected:
+                    collected[cid] = {"id": cid, "word": cword, "source": source}
 
-    # ── Step B: Embeddings (original + fusha candidates together) ─
-    # نشيل ال التعريف من الأصلية أيضاً للبحث
+    # ── Prepare embedding queries for Step B ─────────────────────
     original_clean = normalize(original_word)
     embed_queries  = [original_word, original_clean] + fusha_candidates
-    # شيل التكرار وأبقى الترتيب
     seen_q = set()
     unique_queries = []
     for q in embed_queries:
@@ -292,8 +289,21 @@ def search_word(original_word: str, fusha_candidates: list, sentence: str):
             seen_q.add(q)
             unique_queries.append(q)
 
-    for cid, cword, score in embedding_search(unique_queries, top_k=5):
-        add(cid, cword, f"embed:{score:.3f}")
+    # ── Run Step A and Step B in parallel ─────────────────────────
+    def step_a():
+        for f in fusha_candidates:
+            cid, cword = exact_search(f)
+            if cid:
+                add(cid, cword, "exact")
+
+    def step_b():
+        for cid, cword, score in embedding_search(unique_queries, top_k=5):
+            add(cid, cword, f"embed:{score:.3f}")
+
+    thread_b = threading.Thread(target=step_b)
+    thread_b.start()
+    step_a()
+    thread_b.join()
 
     if not collected:
         return None
@@ -324,7 +334,7 @@ def search_word(original_word: str, fusha_candidates: list, sentence: str):
 def phrase_match_spans(sentence: str, max_n: int = 5):
     """
     Greedy longest-first n-gram match against the dictionary (sizes max_n..2).
-    Single-word matches are skipped — they go through the per-word pipeline.
+    Exact match only — single-word matches go through the per-word pipeline.
     Returns: dict {start_idx: (end_idx, id, word)}.
     """
     tokens = sentence.split()
@@ -343,6 +353,7 @@ def phrase_match_spans(sentence: str, max_n: int = 5):
                 matches[start] = (end, cid, cword)
                 for i in range(start, end):
                     locked[i] = True
+
     return matches
 
 # =========================

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}سنج لن{% endblock %} — مترجم لغة الإشارة</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+  <nav class="navbar">
+    <input type="checkbox" id="nav-toggle" class="nav-toggle-input">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <div class="logo-icon">🤟</div>
+        <span class="logo-text">سنج لن</span>
+      </a>
+      <div class="nav-links">
+        <a href="/translator" class="nav-link {% if active == 'translator' %}active{% endif %}">المترجم</a>
+        <a href="/learning"   class="nav-link {% if active == 'learning'   %}active{% endif %}">التعلّم</a>
+        <a href="/streaming"  class="nav-link {% if active == 'streaming'  %}active{% endif %}">البث المباشر</a>
+      </div>
+      <a href="/translator" class="btn-primary nav-cta">ابدأ الآن</a>
+      <label class="hamburger" for="nav-toggle" aria-label="قائمة التنقل">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+    </div>
+    <div class="nav-mobile">
+      <a href="/translator" class="nav-link {% if active == 'translator' %}active{% endif %}">المترجم</a>
+      <a href="/learning"   class="nav-link {% if active == 'learning'   %}active{% endif %}">التعلّم</a>
+      <a href="/streaming"  class="nav-link {% if active == 'streaming'  %}active{% endif %}">البث المباشر</a>
+      <a href="/translator" class="btn-primary" style="margin-top:8px; justify-content:center;">ابدأ الآن</a>
+    </div>
+  </nav>
+
+  {% block content %}{% endblock %}
+
+  {% block footer %}
+  <footer class="footer">
+    <div class="footer-inner">
+      <span class="footer-logo">سنج لن</span>
+      <span class="footer-copy">© 2025 جميع الحقوق محفوظة</span>
+    </div>
+  </footer>
+  {% endblock %}
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

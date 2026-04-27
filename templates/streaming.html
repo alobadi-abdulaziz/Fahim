@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}البث المباشر{% endblock %}
+
+{% block content %}
+<div class="page">
+
+  <header class="streaming-header">
+    <div class="section-label">ترجمة مستمرة</div>
+    <h1>البث <span style="color:var(--accent)">المباشر</span></h1>
+    <p>ترجمة فورية للكلام إلى لغة إشارة، مثالية للمؤتمرات والفعاليات</p>
+  </header>
+
+  <div class="streaming-layout">
+
+    <!-- Video Panel -->
+    <div class="stream-video-panel">
+      <div class="stream-video-box" id="streamBox">
+        <div class="stream-placeholder" id="streamPlaceholder">
+          <span class="stream-icon">📡</span>
+          <span>اضغط "بدء البث" لتشغيل الترجمة المباشرة</span>
+        </div>
+        <video id="streamVideo" style="display:none; width:100%; height:100%; object-fit:contain;" autoplay playsinline></video>
+      </div>
+
+      <div class="stream-controls">
+        <button class="btn-primary lg" id="streamToggle" onclick="toggleStream()">▶ بدء البث</button>
+        <button class="btn-ghost lg" onclick="clearTranscript()">مسح السجل</button>
+      </div>
+    </div>
+
+    <!-- Transcript Panel -->
+    <div class="stream-transcript-panel">
+      <div class="transcript-header">
+        <span>سجل الترجمة</span>
+        <div class="transcript-live" id="liveIndicator">
+          <div class="badge-dot" style="background:var(--text-muted); box-shadow:none;"></div>
+          غير نشط
+        </div>
+      </div>
+      <div class="transcript-feed" id="transcriptFeed">
+        <div class="transcript-empty">
+          <span class="te-icon">🤟</span>
+          <span>ستظهر هنا الجمل المترجمة فور التعرف عليها</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let streaming = false;
+let pollTimer = null;
+
+function toggleStream() {
+  const btn = document.getElementById('streamToggle');
+  const indicator = document.getElementById('liveIndicator');
+
+  if (!streaming) {
+    streaming = true;
+    btn.textContent = '⏹ إيقاف البث';
+    btn.classList.add('active');
+    indicator.classList.add('on');
+    indicator.innerHTML = '<div class="badge-dot"></div> مباشر';
+    addTranscriptItem('بدأ البث المباشر...');
+    // Stub: future WebSocket / polling connection goes here
+  } else {
+    streaming = false;
+    btn.textContent = '▶ بدء البث';
+    btn.classList.remove('active');
+    indicator.classList.remove('on');
+    indicator.innerHTML = '<div class="badge-dot" style="background:var(--text-muted);box-shadow:none;"></div> غير نشط';
+    addTranscriptItem('توقف البث.');
+    if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+  }
+}
+
+function addTranscriptItem(text) {
+  const feed = document.getElementById('transcriptFeed');
+  const empty = feed.querySelector('.transcript-empty');
+  if (empty) empty.remove();
+
+  const time = new Date().toLocaleTimeString('ar', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const item = document.createElement('div');
+  item.className = 'transcript-item';
+  item.innerHTML = `<div class="transcript-time">${time}</div><div class="transcript-text">${text}</div>`;
+  feed.appendChild(item);
+  feed.scrollTop = feed.scrollHeight;
+}
+
+function clearTranscript() {
+  const feed = document.getElementById('transcriptFeed');
+  feed.innerHTML = `<div class="transcript-empty">
+    <span class="te-icon">🤟</span>
+    <span>ستظهر هنا الجمل المترجمة فور التعرف عليها</span>
+  </div>`;
+}
+</script>
+{% endblock %}

@@ -6,7 +6,7 @@ Run: python app.py
 Open: http://localhost:5000
 """
 
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, render_template
 import os
 import tempfile
 import shutil
@@ -76,7 +76,19 @@ def merge_videos(ids):
 # =========================
 @app.route("/")
 def index():
-    return send_file("index.html")
+    return render_template("index.html")
+
+@app.route("/translator")
+def translator():
+    return render_template("translator.html", active="translator")
+
+@app.route("/learning")
+def learning():
+    return render_template("learning.html", active="learning")
+
+@app.route("/streaming")
+def streaming():
+    return render_template("streaming.html", active="streaming")
 
 @app.route("/chat", methods=["POST"])
 def chat():

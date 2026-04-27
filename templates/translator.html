@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}المترجم{% endblock %}
+{% block body_class %}translator-body{% endblock %}
+
+{% block content %}
+<div class="page">
+  <div id="chat">
+    <div class="empty" id="empty">
+      <div class="icon">🤟</div>
+      <p>اكتب جملة أو استخدم الميكروفون<br>وسيتم تحويلها إلى فيديو لغة إشارة فوراً</p>
+    </div>
+  </div>
+
+  <div id="bar">
+    <button class="btn" id="voiceBtn" title="تسجيل صوتي">🎤</button>
+    <textarea id="inp" placeholder="اكتب رسالتك هنا..." rows="1"></textarea>
+    <button class="btn" id="sendBtn" title="إرسال">➤</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/translator.js"></script>
+{% endblock %}
