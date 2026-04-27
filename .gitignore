@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[oc]
+.venv/
+
+# Generated at runtime
+output.mp4
+
+# Large files (data)
+embeddings_index.npz
+sshi_metadata_try1.json
+data/videos/
+
+# Temp
+edit.txt
+*.tmp
