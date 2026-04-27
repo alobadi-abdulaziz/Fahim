@@ -77,7 +77,17 @@ Multi-page Flask app with Jinja2 templates. All pages extend `templates/base.htm
 
 ### Video Format Constraint
 
-All videos in `data/videos/` must be 1920x1080, 25fps, H.264 High profile. Letter videos (IDs 1-38) were batch-converted to match word videos. If new videos with different formats are added, they must be converted first or the concat will produce playback glitches.
+**Videos are not stored in the repository** (1.4 GB total — excluded via `.gitignore`). You must obtain `data/videos/` separately and place it in the project root before running.
+
+All videos in `data/videos/` must be **1920x1080, 25fps, H.264 High profile**. This is required for ffmpeg `-c copy` stream concatenation to work without re-encoding lag or playback glitches.
+
+Letter videos (IDs 1-38) were originally a different resolution/format and were batch-converted to match the word videos using:
+
+```bash
+ffmpeg -i input.mp4 -vf scale=1920:1080 -r 25 -c:v libx264 -profile:v high -c:a aac output.mp4
+```
+
+If you add new videos with different formats, convert them with the command above before placing them in `data/videos/`.
 
 ### Known Issues / Future Work
 
